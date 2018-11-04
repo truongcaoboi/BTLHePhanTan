@@ -1,0 +1,3 @@
+HostServer:localhost
+PortServer:9000
+PortForClient:10000
