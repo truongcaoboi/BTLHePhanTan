@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//src/control/Communication.java=UTF-8
+encoding//src/model/Account.java=UTF-8
+encoding//src/model/Card.java=UTF-8
+encoding//src/model/Transaction.java=UTF-8
+encoding//src/view/PanelAccount.java=UTF-8
+encoding//src/view/PanelInsert.java=UTF-8
+encoding//src/view/PanelUpdate.java=UTF-8
+encoding//src/view/ViewMain.java=UTF-8
