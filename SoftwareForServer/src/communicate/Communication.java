@@ -34,6 +34,21 @@ public class Communication {
         }
     }
 
+    public void sendResponse(Socket server, Vector<String> rs) {
+        //String response="";
+        try {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(server.getOutputStream()));
+            for (String response : rs) {
+                response = Base64.getEncoder().encodeToString(response.getBytes("UTF-8"));
+                writer.write(response);
+                writer.newLine();
+                writer.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public String ReceiveRequest(Socket server) {
         String request = "";
         try {
@@ -50,6 +65,7 @@ public class Communication {
     }
 
     public String executeRequest(String request) {
+        Vector<String> rs = new Vector<String>();
         String response = "";
         try {
             switch (k) {
@@ -59,181 +75,200 @@ public class Communication {
                     int k1 = object.getInt("k");
                     Vector<Account> accounts = DataControl.Search(s, k1);
                     if (accounts.size() != 0) {
+                        rs = new Vector<String>();
                         for (Account a : accounts) {
                             response += TranformJSONFromAccount(a) + ";";
+                            rs.add(TranformJSONFromAccount(a));
                         }
+                        rs.add("end");
                     } else {
-                        response +="empty";
+                        response = "empty";
                     }
                     break;
                 case 2:
                     System.out.println("case2");
                     Account a = DataControl.getAccount(request);
                     if (a != null) {
-                        response += TranformJSONFromAccount(a);
+                        response = TranformJSONFromAccount(a);
                     } else {
-                        response +="empty";
+                        response = "empty";
                     }
                     break;
                 case 3:
                     Vector<Account> accounts1 = DataControl.getAccounts();
                     if (accounts1.size() != 0) {
                         for (Account a1 : accounts1) {
+                            rs = new Vector<String>();
                             response += TranformJSONFromAccount(a1) + ";";
+                            rs.add(TranformJSONFromAccount(a1));
                         }
+                        rs.add("end");
                     } else {
-                        response +="empty";
+                        response = "empty";
                     }
                     break;
                 case 4:
                     JSONObject object1 = new JSONObject(request);
                     String address = object1.getString("address");
                     String email = object1.getString("email");
-                    if(Storage.isChild(Storage.getEmails(), email)){
-                        return "trung email";
+                    if (Storage.isChild(Storage.getEmails(), email)) {
+                        response = "trung email";
+                        break;
                     }
                     String phone = object1.getString("phone");
-                    if(Storage.isChild(Storage.getPhones(), phone)){
-                        return "trung phone";
+                    if (Storage.isChild(Storage.getPhones(), phone)) {
+                        response = "trung phone";
+                        break;
                     }
                     String stk = object1.getString("stk");
                     boolean flag = DataControl.updateInfoAccount(address, email, phone, stk);
                     if (flag) {
-                        response +="success";
+                        response = "success";
                     } else {
-                        response +="failure";
+                        response = "failure";
                     }
                     break;
                 case 5:
                     if (DataControl.CloseAccount(request)) {
-                        response +="success";
+                        response = "success";
                     } else {
-                        response +="failure";
+                        response = "failure";
                     }
                     break;
                 case 6:
                     if (DataControl.OpenAccount(request)) {
-                        response +="success";
+                        response = "success";
                     } else {
-                        response +="failure";
+                        response = "failure";
                     }
                     break;
                 case 7:
                     JSONObject object2 = new JSONObject(request);
-                    String add=object2.getString("add");
-                    double bal=object2.getDouble("bal");
-                    String birth=object2.getString("birth");
-                    String email1=object2.getString("email");
-                    if(Storage.isChild(Storage.getEmails(), email1)){
-                        return "trung email";
+                    String add = object2.getString("add");
+                    double bal = object2.getDouble("bal");
+                    String birth = object2.getString("birth");
+                    String email1 = object2.getString("email");
+                    if (Storage.isChild(Storage.getEmails(), email1)) {
+                        response = "trung email";
+                        break;
                     }
-                    String name=object2.getString("name");
-                    int gen=object2.getInt("gen");
-                    String ide=object2.getString("ide");
-                    if(Storage.isChild(Storage.getIdens(), ide)){
-                        return "trung iden";
+                    String name = object2.getString("name");
+                    int gen = object2.getInt("gen");
+                    String ide = object2.getString("ide");
+                    if (Storage.isChild(Storage.getIdens(), ide)) {
+                        response = "trung iden";
+                        break;
                     }
-                    String phone2=object2.getString("phone");
-                    if(Storage.isChild(Storage.getPhones(), phone2)){
-                        return "trung phone";
+                    String phone2 = object2.getString("phone");
+                    if (Storage.isChild(Storage.getPhones(), phone2)) {
+                        response = "trung phone";
+                        break;
                     }
-                    if(DataControl.insertAccount(add, bal, birth, email1, name, gen, ide, phone2)){
-                        response+="success";
-                    }else{
-                        response+="failure";
-                    } 
+                    if (DataControl.insertAccount(add, bal, birth, email1, name, gen, ide, phone2)) {
+                        response = "success";
+                    } else {
+                        response = "failure";
+                    }
                     break;
                 case 8:
                     JSONObject item = new JSONObject(request);
-                    stk=item.getString("stk");
-                    int type=item.getInt("type");
-                    response+=DataControl.insertCard(stk, type);
+                    stk = item.getString("stk");
+                    int type = item.getInt("type");
+                    response = DataControl.insertCard(stk, type);
                     break;
                 case 9:
-                    if(DataControl.CloseCard(request)){
-                        response+="success";
-                    }else{
-                        response+="failure";
-                    }    
+                    if (DataControl.CloseCard(request)) {
+                        response = "success";
+                    } else {
+                        response = "failure";
+                    }
                     break;
                 case 10:
-                    if(DataControl.OpenCard(request)){
-                        response+="success";
-                    }else{
-                        response+="failure";
+                    if (DataControl.OpenCard(request)) {
+                        response = "success";
+                    } else {
+                        response = "failure";
                     }
                     break;
                 case 11:
-                    Vector<Transaction> bills=DataControl.getAllBill();
-                    if(bills.size()==0){
-                        return "empty";
-                    }else{
-                        for(Transaction b:bills){
-                            response+=TranformJSONFromBill(b);
+                    Vector<Transaction> bills = DataControl.getAllBill();
+                    if (bills.size() == 0) {
+                        response = "empty";
+                    } else {
+                        rs = new Vector<String>();
+                        for (Transaction b : bills) {
+                            response += TranformJSONFromBill(b) + ";";
+                            rs.add(TranformJSONFromBill(b));
                         }
+                        rs.add("end");
+                        //sendResponse(server, rs);
+                        //response="haha";
                     }
                     break;
                 case 12:
-                    item=new JSONObject(request);
-                    double amount=item.getDouble("amount");
-                    String card_no=item.getString("card_no");
-                    String at=item.getString("at");
-                    if(DataControl.RutTien(card_no, amount, at)){
-                        response+="success";
-                    }else{
-                        response+="failure";
+                    item = new JSONObject(request);
+                    double amount = item.getDouble("amount");
+                    String card_no = item.getString("card_no");
+                    String at = item.getString("at");
+                    if (DataControl.RutTien(card_no, amount, at)) {
+                        response = "success";
+                    } else {
+                        response = "failure";
                     }
                     break;
                 case 13:
-                    item=new JSONObject(request);
-                    amount=item.getDouble("amount");
-                    card_no=item.getString("card_no");
-                    at=item.getString("at");
-                    if(DataControl.NopTien(card_no, amount, at)){
-                        response+="success";
-                    }else{
-                        response+="failure";
+                    item = new JSONObject(request);
+                    amount = item.getDouble("amount");
+                    card_no = item.getString("card_no");
+                    at = item.getString("at");
+                    if (DataControl.NopTien(card_no, amount, at)) {
+                        response = "success";
+                    } else {
+                        response = "failure";
                     }
                     break;
                 case 14:
-                    item=new JSONObject(request);
-                    amount=item.getDouble("amount");
-                    card_no=item.getString("card_no");
-                    at=item.getString("at");
-                    String receiver=item.getString("receiver");
-                    if(DataControl.ChuyenTien(card_no,receiver, amount, at)){
-                        response+="success";
-                    }else{
-                        response+="failure";
+                    item = new JSONObject(request);
+                    amount = item.getDouble("amount");
+                    card_no = item.getString("card_no");
+                    at = item.getString("at");
+                    String receiver = item.getString("receiver");
+                    if (DataControl.ChuyenTien(card_no, receiver, amount, at)) {
+                        response = "success";
+                    } else {
+                        response = "failure";
                     }
                     break;
                 case 15:
                     //Lấy ra danh sách thẻ của người dung
-                    Vector<Card> cards=DataControl.getCardOfAccount(request);
-                    for(Card c:cards){
-                        response+=TranformJSONFromCard(c);
+                    Vector<Card> cards = DataControl.getCardOfAccount(request);
+                    rs = new Vector<String>();
+                    for (Card c : cards) {
+                        response += TranformJSONFromCard(c) + ";";
+                        rs.add(TranformJSONFromCard(c));
                     }
+                    rs.add("end");
                     break;
                 case 16:
                     //Kiểm tra đăng nhập người dùng
-                    item=new JSONObject(request);
-                    card_no=item.getString("card_no");
-                    String pass=item.getString("pass");
-                    a=DataControl.checkLogin(card_no, pass);
-                    if(a!=null){
-                        return TranformJSONFromAccount(a);
-                    }else{
-                        return "failure";
+                    item = new JSONObject(request);
+                    card_no = item.getString("card_no");
+                    String pass = item.getString("pass");
+                    a = DataControl.checkLogin(card_no, pass);
+                    if (a != null) {
+                        response = TranformJSONFromAccount(a);
+                    } else {
+                        response = "failure";
                     }
-                    //break;
+                //break;
                 case 17:
-                    item=new JSONObject(request);
-                    card_no=item.getString("card_no");
-                    pass=item.getString("pass");
-                    if(DataControl.changePass(card_no, pass)){
-                        response+="success";
-                    }else{
-                        response+="failure";
+                    item = new JSONObject(request);
+                    card_no = item.getString("card_no");
+                    pass = item.getString("pass");
+                    if (DataControl.changePass(card_no, pass)) {
+                        response = "success";
+                    } else {
+                        response = "failure";
                     }
                     break;
             }
@@ -241,6 +276,7 @@ public class Communication {
             e.printStackTrace();
         }
         System.out.println(response);
+        //sendResponse(server, rs);
         return response;
     }
 
@@ -257,13 +293,13 @@ public class Communication {
         System.out.println(str);
         return str;
     }
-    
+
     private String TranformJSONFromBill(Transaction a) {
-        String str = "{\"bill_no\":\"" + a.getBill_no() + "\",\"card_no\":\"" + a.getCard_no() + "\",\"account_no\":\"" + a.getAccount_no() + "\",\"date_create\":\"" + a.getDateCreate() + "\",\"at\":\"" + a.getExchange_at() + "\",\"receiver\":\"" + a.getReceiver() + "\",\"nameTo\":\"" + a.getNameTo() + "\",\"nameFrom\":\"" + a.getNameFrom() + "\",\"amount\":\"" + a.getAmount() + "\",\"sta\":" + a.getSta() + ",\"type\":" + a.getType() + "}";
+        String str = "{\"bill_no\":\"" + a.getBill_no() + "\",\"date_create\":\"" + a.getDateCreate() + "\",\"at\":\"" + a.getExchange_at() + "\",\"nameTo\":\"" + a.getNameTo() + "\",\"nameFrom\":\"" + a.getNameFrom() + "\",\"amount\":" + a.getAmount() + ",\"sta\":" + a.getSta() + ",\"type\":" + a.getType() + "}";
         System.out.println(str);
         return str;
     }
-    
+
     private String TranformJSONFromCard(Card a) {
         String str = "{\"accoun_no\":\"" + a.getAccount_no() + "\",\"card_no\":\"" + a.getCard_no() + "\",\"date_create\":\"" + a.getDateCreate() + "\",\"sta\":" + a.getSta() + ",\"type\":" + a.getType() + ",\"pass\":\"" + a.getPass() + "\"}";
         System.out.println(str);

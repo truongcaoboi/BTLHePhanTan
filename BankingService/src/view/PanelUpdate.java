@@ -2,6 +2,9 @@ package view;
 
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import control.Action;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,7 +23,7 @@ public class PanelUpdate extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public PanelUpdate() {
+	public PanelUpdate(String stk) {
 		setBorder(new LineBorder(new Color(0, 0, 0)));
 		setBounds(0, 0, 838, 201);
 		setLayout(null);
@@ -58,7 +61,18 @@ public class PanelUpdate extends JPanel {
 		JButton btnHonTt = new JButton("Ho\u00E0n t\u1EA5t");
 		btnHonTt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Cập nhật tài khoản");
+				String phone=txtPhone.getText();
+				if(phone.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "không được để trống số điện thoại");
+					return;
+				}
+				String email=txtEmail.getText();
+				String address=txtAddress.getText();
+				if(address.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "không được để trống địa chỉ");
+					return;
+				}
+				JOptionPane.showMessageDialog(null, Action.updateAccount(address, email, phone, stk));
 			}
 		});
 		btnHonTt.setBounds(349, 159, 89, 23);

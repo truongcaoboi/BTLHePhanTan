@@ -5,12 +5,17 @@ import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import control.Action;
 import control.Communication;
+import model.Account;
+import model.Transaction;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -53,7 +58,7 @@ public class ViewMain extends JFrame {
 		JPanel panelParent = new JPanel();
 		panelParent.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panelParent.setBounds(25, 84, 1461, 661);
-		PanelAccount a=new PanelAccount();
+		PanelAccount a=new PanelAccount(Action.getAllAccount());
 		a.setBounds(0,0,1461,661);
 		a.setVisible(true);
 		panelParent.add(a);
@@ -67,15 +72,16 @@ public class ViewMain extends JFrame {
 		btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Vector<Account> a1=Action.getAllAccount();
 				panelParent.removeAll();
-				PanelAccount a=new PanelAccount();
+				PanelAccount a=new PanelAccount(a1);
 				a.setBounds(0,0,1461,661);
 				a.setVisible(true);
 				panelParent.add(a);
 				panelParent.revalidate();
 				panelParent.repaint();
 				btnAccount.setEnabled(false);
-				btnTransaction.setEnabled(true);
+				btnTransaction.setEnabled(true);			
 			}
 		});
 		btnAccount.setBounds(25, 33, 154, 51);
@@ -83,9 +89,11 @@ public class ViewMain extends JFrame {
 		
 		
 		btnTransaction.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {			
+			public void actionPerformed(ActionEvent e) {	
+				Vector<Transaction> tran=Action.getAllBill();
+				//System.out.println(tran.size());
 				panelParent.removeAll();
-				PanelTransaction t=new PanelTransaction();
+				PanelTransaction t=new PanelTransaction(tran);
 				t.setBounds(0, 0, 1461, 661);
 				t.setVisible(true);
 				panelParent.add(t);

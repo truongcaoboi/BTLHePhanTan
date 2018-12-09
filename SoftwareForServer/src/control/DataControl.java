@@ -158,6 +158,7 @@ public class DataControl {
             DataAccess.CloseStatement(state);
             DataAccess.CloseConnect(con);
         }
+        UpdateDatabase2.updateInfoAccount(address, email, phone, stk);
         return flag;
     }
 
@@ -178,6 +179,7 @@ public class DataControl {
             DataAccess.CloseStatement(state);
             DataAccess.CloseConnect(con);
         }
+        UpdateDatabase2.CloseAccount(stk);
         return flag;
     }
 
@@ -198,6 +200,7 @@ public class DataControl {
             DataAccess.CloseStatement(state);
             DataAccess.CloseConnect(con);
         }
+        UpdateDatabase2.OpenAccount(stk);
         return flag;
     }
 
@@ -226,6 +229,7 @@ public class DataControl {
         if (email != null | email.trim() != "") {
             Storage.addEmail(email);
         }
+        UpdateDatabase2.insertAccount(stk, add, bal, birth, email, name, gen, ide, phone, gen);
         return flag;
     }
 
@@ -249,11 +253,12 @@ public class DataControl {
             DataAccess.CloseConnect(con);
         }
         Storage.addCardNo(card_no);
+        UpdateDatabase2.insertCard(card_no, stk, type);
         return card_no;
     }
 
     public static boolean CloseCard(String card_no) {
-        String sql = "update card set sta=0 where card_no=\'" + card_no + "\'";
+        String sql = "update card set sta=0 where card_no=\'" + card_no + "\' and sta=1";
         Connection con = null;
         Statement state = null;
         boolean flag = true;
@@ -269,6 +274,7 @@ public class DataControl {
             DataAccess.CloseStatement(state);
             DataAccess.CloseConnect(con);
         }
+        UpdateDatabase2.CloseCard(card_no);
         return flag;
     }
 
@@ -289,6 +295,7 @@ public class DataControl {
             DataAccess.CloseStatement(state);
             DataAccess.CloseConnect(con);
         }
+        UpdateDatabase2.OpenCard(card_no);
         return flag;
     }
 
@@ -400,6 +407,7 @@ public class DataControl {
             DataAccess.CloseStatement(state);
             DataAccess.CloseConnect(con);
         }
+        UpdateDatabase2.insertBill(bill_no, amount, card_no, ex_at, re, sta, type);
         return flag;
     }
 
@@ -487,10 +495,12 @@ public class DataControl {
                         stk = rs.getString("Account_No");
                     }
                     insertBill(amount, card_no, at, stk, 0, 1);
+                    UpdateDatabase2.updateBalance(card_no, balance);
                 }
             } else {
                 flag = false;
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
             flag = false;
@@ -530,6 +540,7 @@ public class DataControl {
                     stk = rs.getString("Account_No");
                 }
                 insertBill(amount, card_no, at, stk, 0, 2);
+                UpdateDatabase2.updateBalance(card_no, balance);
             }
 
         } catch (Exception e) {
@@ -551,7 +562,7 @@ public class DataControl {
         Statement state = null;
         ResultSet rs = null;
         double balance = 0;
-        boolean flag = true;
+        boolean flag = true;        
         try {
             System.out.println(sql);
             con = DataAccess.getConnect1();
@@ -564,6 +575,7 @@ public class DataControl {
                 balance -= amount;
                 sql = "update account set balance=" + balance + " where account_no=(select account_no from card where card_no=\'" + card_no + "\')";
                 if (state.executeUpdate(sql) == 1) {
+                    UpdateDatabase2.updateBalance(card_no, balance);
                     sql = "select balance from account where account_no=\'" + receiver + "\'";
                     rs = state.executeQuery(sql);
                     while (rs.next()) {
@@ -573,6 +585,7 @@ public class DataControl {
                     sql="update account set balance="+balance+" where Account_No=\'"+receiver+"\'";
                     if(state.executeUpdate(sql)==1){
                         insertBill(amount, card_no, at, receiver, 0, 3);
+                        UpdateDatabase2.updateBalance1(receiver, balance);
                     }
                 }
             } else {

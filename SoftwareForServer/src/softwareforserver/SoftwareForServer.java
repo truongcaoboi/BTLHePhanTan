@@ -23,8 +23,9 @@ public class SoftwareForServer {
     public static void main(String[] args) {
         new ReadFIle().Read();
         ServerSocket listener=null;
+        int port=new ReadFIle().Read();
         try{
-            listener=new ServerSocket(10000);
+            listener=new ServerSocket(port);
         }catch(Exception e){
             e.printStackTrace();
         }

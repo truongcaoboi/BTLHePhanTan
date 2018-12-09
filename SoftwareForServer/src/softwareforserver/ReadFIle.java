@@ -14,7 +14,8 @@ import java.io.FileReader;
  * @author Xuan Truong PC
  */
 public class ReadFIle {
-    public void Read(){
+    public int Read(){
+        int port=0;
         try{
             File file=new File("config.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -22,8 +23,10 @@ public class ReadFIle {
             String host2=br.readLine().split(":")[1];
             control.DataAccess.setHost1(host1);
             control.DataAccess.setHost2(host2);
+            port=Integer.parseInt(br.readLine().split(":")[1]);
         }catch(Exception e){
             e.printStackTrace();
         }
+        return port;
     }
 }

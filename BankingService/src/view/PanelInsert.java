@@ -2,6 +2,9 @@ package view;
 
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import control.Action;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -122,7 +125,41 @@ public class PanelInsert extends JPanel {
 		JButton btnThm = new JButton("Ho\u00E0n t\u1EA5t");
 		btnThm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Thêm tài khoản");
+				String name=txtName.getText();
+				if(name.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "không được để trống họ tên");
+					return;
+				}
+				String birth=txtBirth.getText();
+				if(birth.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "không được để trống năm sinh");
+					return;
+				}
+				String phone=txtPhone.getText();
+				if(phone.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "không được để trống số điện thoại");
+					return;
+				}
+				String email=txtEmail.getText();
+				String address=txtAddress.getText();
+				if(address.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "không được để trống địa chỉ");
+					return;
+				}
+				String idenNo=txtIdenNo.getText();
+				if(idenNo.trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "không được để trống số chứng minh");
+					return;
+				}
+				String amount=txtAmount.getText();
+				double am=0;
+				try {
+					am=Double.parseDouble(amount);
+				}catch(Exception e2) {
+					JOptionPane.showMessageDialog(null, "Số tiền nhập vào không hợp lệ");
+				}
+				int gender=cbGender.getSelectedIndex();
+				JOptionPane.showMessageDialog(null, Action.insertAccount(address, am, birth, email, name, gender, idenNo, phone));
 			}
 		});
 		btnThm.setBounds(328, 167, 89, 23);

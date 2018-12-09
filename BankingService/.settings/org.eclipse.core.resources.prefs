@@ -1,9 +1,13 @@
 eclipse.preferences.version=1
+encoding//src/control/Action.java=UTF-8
 encoding//src/control/Communication.java=UTF-8
+encoding//src/control/Display.java=UTF-8
 encoding//src/model/Account.java=UTF-8
 encoding//src/model/Card.java=UTF-8
 encoding//src/model/Transaction.java=UTF-8
 encoding//src/view/PanelAccount.java=UTF-8
 encoding//src/view/PanelInsert.java=UTF-8
+encoding//src/view/PanelShowDetail.java=UTF-8
+encoding//src/view/PanelTransaction.java=UTF-8
 encoding//src/view/PanelUpdate.java=UTF-8
 encoding//src/view/ViewMain.java=UTF-8

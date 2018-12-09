@@ -4,6 +4,8 @@ import model.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.swing.JOptionPane;
+
 import org.json.JSONObject;
 public class Action {
 	
@@ -32,6 +34,9 @@ public class Action {
 	
 	
 	private static Card TranformJsonToCard(String s) {
+		if(s.trim().length()==0) {
+			return null;
+		}
 		Card c=null;
 		try {
 			JSONObject item=new JSONObject(s);
@@ -54,17 +59,17 @@ public class Action {
 		try {
 			JSONObject item=new JSONObject(s);
 			t=new Transaction();
-			t.setAccount_no(item.getString("account_no"));
+			//t.setAccount_no(item.getString("account_no"));
 			t.setAmount(item.getDouble("amount"));
 			t.setBill_no(item.getString("bill_no"));
-			t.setCard_no(item.getString("card_no"));
+			//t.setCard_no(item.getString("card_no"));
 			SimpleDateFormat output=new SimpleDateFormat("dd/MM/Y");
 			t.setDateCreate(output.parse(item.getString("date_create")));
 			t.setExchange_at(item.getString("at"));
 			//t.setId(item.getInt(key));
 			t.setNameFrom(item.getString("nameFrom"));
 			t.setNameTo(item.getString("nameTo"));
-			t.setReceiver(item.getString("receiver"));
+			//t.setReceiver(item.getString("receiver"));
 			t.setSta(item.getInt("sta"));
 			t.setType(item.getInt("type"));
 		}catch(Exception e) {
@@ -75,10 +80,12 @@ public class Action {
 
 	public static Vector<Account> Search(String s,int k){
 		Vector<Account> accounts=new Vector<Account>();
+		Vector<String> rs=new Vector<String>();
 		try {
 			String request="1;{\"s\":\""+s+"\",\"k\":"+k+"}";
 			Communication com=new Communication();
 			com.SendRequest(request);
+			//rs=com.ReceiveResponse(1);
 			String res=com.ReceiveResponse();
 			if(res.equals("empty")) {
 				return null;
@@ -106,6 +113,7 @@ public class Action {
 			String request="2;"+stk;
 			Communication com=new Communication();
 			com.SendRequest(request);
+			//Vector<String> rs=com.ReceiveResponse(1);
 			String res=com.ReceiveResponse();
 			if(res.equals("empty")) {
 				return null;
@@ -124,6 +132,7 @@ public class Action {
 			String request="3;getAllAccount";
 			Communication com=new Communication();
 			com.SendRequest(request);
+			//Vector<String> rs=com.ReceiveResponse(1);
 			String res=com.ReceiveResponse();
 			if(res.equals("empty")) {
 				return null;
@@ -165,6 +174,11 @@ public class Action {
 		Communication com=new Communication();
 		com.SendRequest(request);
 		res=com.ReceiveResponse();
+		if(res.equals("success")) {
+			JOptionPane.showMessageDialog(null, "Đóng tài khoản \""+stk+"\" thành công");
+		}else {
+			JOptionPane.showMessageDialog(null, "Đóng tài khoản \""+stk+"\" thất bại");
+		}
 		return res;
 	}
 	
@@ -174,6 +188,11 @@ public class Action {
 		Communication com=new Communication();
 		com.SendRequest(request);
 		res=com.ReceiveResponse();
+		if(res.equals("success")) {
+			JOptionPane.showMessageDialog(null, "Mở tài khoản \""+stk+"\" thành công");
+		}else {
+			JOptionPane.showMessageDialog(null, "Mở tài khoản \""+stk+"\" thất bại");
+		}
 		return res;
 	}
 	
@@ -201,6 +220,11 @@ public class Action {
 		Communication com=new Communication();
 		com.SendRequest(request);
 		res=com.ReceiveResponse();
+		if(res.equals("success")) {
+			JOptionPane.showMessageDialog(null, "Đóng thẻ \""+card+"\" thành công");
+		}else {
+			JOptionPane.showMessageDialog(null, "Đóng thẻ \""+card+"\" thất bại");
+		}
 		return res;
 	}
 	
@@ -210,6 +234,11 @@ public class Action {
 		Communication com=new Communication();
 		com.SendRequest(request);
 		res=com.ReceiveResponse();
+		if(res.equals("success")) {
+			JOptionPane.showMessageDialog(null, "Mở thẻ \""+card+"\" thành công");
+		}else {
+			JOptionPane.showMessageDialog(null, "Mở thẻ \""+card+"\" thất bại");
+		}
 		return res;
 	}
 	
@@ -219,10 +248,12 @@ public class Action {
 			String request="11;getAllBill";
 			Communication com=new Communication();
 			com.SendRequest(request);
-			String res=com.ReceiveResponse();
-			if(!res.equals("empty")) {
-				String [] array=res.split(";");
-				for(String x:array) {
+			
+			//Vector<String>res=com.ReceiveResponse(1);
+			String s=com.ReceiveResponse();
+			//System.out.println("toi day");
+			if(!s.equals("empty")) {
+				for(String x:s.split(";")) {
 					Transaction t=TranformJsonToTransaction(x);
 					if(t!=null) {
 						bills.add(t);
@@ -231,6 +262,7 @@ public class Action {
 					}
 				}
 			}
+			//System.out.println(bills.size());
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -238,7 +270,7 @@ public class Action {
 	}
 	
 	public static boolean RutTien(String AccountNo,double amount) {
-		String request="12;{\"amount\":"+amount+",\"account_no\":\""+AccountNo+"\",\"at\":\"ATM\"}";
+		String request="12;{\"amount\":"+amount+",\"card_no\":\""+AccountNo+"\",\"at\":\"Ngân hàng\"}";
 		System.out.println(request);
 		Communication com=new Communication();
 		com.SendRequest(request);
@@ -251,7 +283,7 @@ public class Action {
 	}
 	
 	public static boolean NopTien(String cardNo,double amount) {
-		String request="13;{\"amount\":"+amount+",\"card_no\":\""+cardNo+"\",\"at\":\"ATM\"}";
+		String request="13;{\"amount\":"+amount+",\"card_no\":\""+cardNo+"\",\"at\":\"Ngân hàng\"}";
 		Communication com=new Communication();
 		com.SendRequest(request);
 		String response=com.ReceiveResponse();
@@ -263,7 +295,7 @@ public class Action {
 	}
 	
 	public static boolean ChuyenTien(String cardNo,double amount,String receiver) {
-		String request="14;{\"amount\":"+amount+",\"card_no\":\""+cardNo+"\",\"at\":\"ATM\",\"receiver\":\""+receiver+"\"}";
+		String request="14;{\"amount\":"+amount+",\"card_no\":\""+cardNo+"\",\"at\":\"Ngân hàng\",\"receiver\":\""+receiver+"\"}";
 		Communication com=new Communication(); 
 		com.SendRequest("2;"+receiver);
 		String res=com.ReceiveResponse();
